@@ -6,7 +6,10 @@ use std::{
 
 fn main() {
     let input = std::fs::read_to_string("input").unwrap();
-    let bounds = (input.lines().next().unwrap().chars().count(), input.lines().count());
+    let bounds = (
+        input.lines().next().unwrap().chars().count(),
+        input.lines().count(),
+    );
     let coord_map: HashMap<_, Vec<_>> =
         input
             .lines()
@@ -30,8 +33,8 @@ fn main() {
                 .for_each(|(first, second)| {
                     let diff = (first.0 - second.0, first.1 - second.1);
                     for (f, mut coords) in [
-                        (Add::add as fn(i32, i32) -> i32, (first.0, first.1)),
-                        (Sub::sub as fn(i32, i32) -> i32, (second.0, second.1)),
+                        (Add::add as fn(i32, i32) -> i32, *first),
+                        (Sub::sub as fn(i32, i32) -> i32, *second),
                     ] {
                         for i in 0.. {
                             if !check_bounds(bounds, coords) {
