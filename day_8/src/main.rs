@@ -6,11 +6,7 @@ use std::{
 
 fn main() {
     let input = std::fs::read_to_string("input").unwrap();
-    let (y_max, x_max) = (
-        input.lines().count(),
-        input.lines().next().unwrap().chars().count(),
-    );
-
+    let bounds = (input.lines().next().unwrap().chars().count(), input.lines().count());
     let coord_map: HashMap<_, Vec<_>> =
         input
             .lines()
@@ -38,7 +34,7 @@ fn main() {
                         (Sub::sub as fn(i32, i32) -> i32, (second.0, second.1)),
                     ] {
                         for i in 0.. {
-                            if !check_bounds(x_max, y_max, coords) {
+                            if !check_bounds(bounds, coords) {
                                 break;
                             }
 
@@ -57,6 +53,6 @@ fn main() {
     println!("{}\n{}", coord_set.0.len(), coord_set.1.len());
 }
 
-fn check_bounds(x_max: usize, y_max: usize, coords: (i32, i32)) -> bool {
-    0 <= coords.0 && coords.0 < x_max as i32 && 0 <= coords.1 && coords.1 < y_max as i32
+fn check_bounds(bounds: (usize, usize), coords: (i32, i32)) -> bool {
+    0 <= coords.0 && coords.0 < bounds.0 as i32 && 0 <= coords.1 && coords.1 < bounds.1 as i32
 }
