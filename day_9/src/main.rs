@@ -8,18 +8,23 @@ enum BlockPos {
 
 fn main() {
     let input = std::fs::read_to_string("input").unwrap();
-    let mut file_system_1 = input.chars().filter(|c| *c != '\n').enumerate().flat_map(| (i, c)| {
-        let len = c.to_digit(10).unwrap() as usize;
-        match i % 2 {
-            0 => {
-                vec![BlockPos::File(i / 2); len]
+    let mut file_system_1 = input
+        .chars()
+        .filter(|c| *c != '\n')
+        .enumerate()
+        .flat_map(|(i, c)| {
+            let len = c.to_digit(10).unwrap() as usize;
+            match i % 2 {
+                0 => {
+                    vec![BlockPos::File(i / 2); len]
+                }
+                1 => {
+                    vec![BlockPos::Free; len]
+                }
+                _ => unreachable!(),
             }
-            1 => {
-                vec![BlockPos::Free; len]
-            }
-            _ => unreachable!()
-        }
-    }).collect::<Vec<BlockPos>>();
+        })
+        .collect::<Vec<BlockPos>>();
     let mut file_system_2 = file_system_1.clone();
 
     // part 1
@@ -40,12 +45,15 @@ fn main() {
         file_system_1[i] = BlockPos::Free;
     }
 
-    let sum_1 = file_system_1.iter().take_while(|b| **b != BlockPos::Free).enumerate().map(|(i, b)| {
-        match *b {
+    let sum_1 = file_system_1
+        .iter()
+        .take_while(|b| **b != BlockPos::Free)
+        .enumerate()
+        .map(|(i, b)| match *b {
             BlockPos::File(file_id) => i * file_id,
-            _ => unreachable!()
-        }
-    }).sum::<usize>();
+            _ => unreachable!(),
+        })
+        .sum::<usize>();
 
     // part 2
     let mut j = file_system_2.len() - 1;
@@ -78,17 +86,25 @@ fn main() {
         }
     }
 
-    let sum_2 = file_system_2.iter().enumerate().filter(|(_, b)| **b != BlockPos::Free).map(|(i, b)| {
-        match *b {
+    let sum_2 = file_system_2
+        .iter()
+        .enumerate()
+        .filter(|(_, b)| **b != BlockPos::Free)
+        .map(|(i, b)| match *b {
             BlockPos::File(file_id) => i * file_id,
-            _ => unreachable!()
-        }
-    }).sum::<usize>();
+            _ => unreachable!(),
+        })
+        .sum::<usize>();
     println!("{sum_1}\n{sum_2}");
 }
 
-fn find_free_pos(file_system: &Vec<BlockPos>, right_bound: usize, len: usize) -> Option<Range<usize>> {
-    file_system[..right_bound].windows(len).position(|slice| {
-        slice.iter().all(|b| *b == BlockPos::Free)
-    }).map(|start| (start..start + len))
+fn find_free_pos(
+    file_system: &Vec<BlockPos>,
+    right_bound: usize,
+    len: usize,
+) -> Option<Range<usize>> {
+    file_system[..right_bound]
+        .windows(len)
+        .position(|slice| slice.iter().all(|b| *b == BlockPos::Free))
+        .map(|start| (start..start + len))
 }
